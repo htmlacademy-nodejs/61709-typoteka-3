@@ -7,9 +7,7 @@ const LAST_COMMENTS_LIMIT = 4;
 class CommentService {
 
   async createComment(articleId, commentData) {
-    const newComment = await Comment.create(commentData, {returning: true});
-
-    return newComment;
+    return await Comment.create(commentData, {returning: true});
   }
 
   async findOne(commentId) {

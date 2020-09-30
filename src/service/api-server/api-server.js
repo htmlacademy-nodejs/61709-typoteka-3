@@ -1,5 +1,6 @@
 'use strict';
 
+const http = require(`http`);
 const express = require(`express`);
 const cookieParser = require(`cookie-parser`);
 const expressPinoLogger = require(`express-pino-logger`);
@@ -8,7 +9,8 @@ const {getLogger} = require(`../logger`);
 
 const {
   API_PREFIX,
-  HttpCode
+  HttpCode,
+  ExitCode
 } = require(`../../constants`);
 
 const {
@@ -26,33 +28,34 @@ const {
   UserService
 } = require(`../data-service`);
 
-const getServer = async () => {
-  const server = express();
+const getServer = async (port) => {
+  const app = express();
+  const server = http.createServer(app);
   const logger = getLogger();
 
   await connectDB();
 
-  server.disable(`x-powered-by`);
-  server.use(expressPinoLogger(logger));
-  server.use(express.json());
-  server.use(cookieParser());
+  app.disable(`x-powered-by`);
+  app.use(expressPinoLogger(logger));
+  app.use(express.json());
+  app.use(cookieParser());
 
-  server.use((req, res, next) => {
+  app.use((req, res, next) => {
     logger.debug(`Start request to url ${req.url}`);
     next();
   });
 
-  server.use(
+  app.use(
       `${API_PREFIX}/categories`,
       getCategoryRouter(new CategoryService())
   );
 
-  server.use(
+  app.use(
       `${API_PREFIX}/users`,
       getUserRouter(new UserService())
   );
 
-  server.use(
+  app.use(
       `${API_PREFIX}/articles`,
       getArticlesRouter(
           new ArticleService(),
@@ -62,12 +65,12 @@ const getServer = async () => {
       )
   );
 
-  server.use(
+  app.use(
       `${API_PREFIX}/search`,
       getSearchRouter(new SearchService())
   );
 
-  server.use((req, res) => {
+  app.use((req, res) => {
     const notFoundMessageText = `Not found`;
 
     logger.error(`End request (${req.url}) with error ${HttpCode.NOT_FOUND}.`);
@@ -77,6 +80,16 @@ const getServer = async () => {
       status: HttpCode.NOT_FOUND,
       message: notFoundMessageText
     });
+  });
+
+  server.listen(port, (err) => {
+
+    if (err) {
+      logger.error(`Server error`, err);
+      process.exit(ExitCode.ERROR);
+    }
+
+    return logger.info(`Server is running on port: ${port}`);
   });
 
   return server;

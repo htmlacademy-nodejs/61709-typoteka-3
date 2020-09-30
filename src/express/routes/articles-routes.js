@@ -141,6 +141,7 @@ const getArticlesRouter = (service) => {
 
   articlesRouter.post(`/:id/comments`, csrfProtection, checkAuth(service, RouteProtectionType.FULL), async (req, res, next) => {
     try {
+      const io = req.app.get(`io`);
       const articleId = req.params.id;
       const commentData = {...req.body, userId: req.user.id};
 
@@ -150,6 +151,12 @@ const getArticlesRouter = (service) => {
         const {errors, article} = commentCreationResult;
         return res.render(`article`, {errors, article, commentData, csrf: req.csrfToken()});
       }
+
+      const lastComments = await service.getLastArticlesComments();
+      const mostDiscussedArticles = await service.getMostDiscussedArticles();
+
+      io.emit(`last_comments`, lastComments);
+      io.emit(`popular_articles`, mostDiscussedArticles);
 
       return res.redirect(`/articles/${articleId}`);
     } catch (err) {

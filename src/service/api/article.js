@@ -1,5 +1,4 @@
 'use strict';
-
 const {Router} = require(`express`);
 const moment = require(`moment`);
 const {
@@ -41,6 +40,11 @@ const getArticlesRouter = (articleService, commentService, categoryService, user
       articlesCount,
       pagesCount
     });
+  });
+
+  articlesRouter.get(`/comments`, async (req, res) => {
+    const mostDiscussedArticles = await articleService.findMostDiscussedArticles();
+    return res.status(HttpCode.SUCCESS).json(mostDiscussedArticles);
   });
 
   articlesRouter.get(`/:articleId`, checkParamIsInteger, async (req, res) => {

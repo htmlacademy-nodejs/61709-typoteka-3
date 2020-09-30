@@ -1,7 +1,43 @@
 'use strict';
 
-// логика выбора даты в календаре
+let socket = io();
 
+socket.on('last_comments', (comments) => {
+
+  if (window.location.pathname !== `/`) {
+    return false;
+  }
+
+  const commentsList = document.querySelector(`.last__list`);
+  const tmp = comments.map((comment) => (
+    `
+      <li class="last__list-item">
+        <img class="last__list-image" src="img/${comment.users.avatar}" width="20" height="20" alt="Аватар пользователя">
+        <b class="last__list-name">${comment.users.firstname} ${comment.users.lastname}</b>
+        <a class="last__list-link" href="/articles/${comment.articleId}/#comments">${comment.text}</a>
+      </li>`
+  ));
+  commentsList.innerHTML = '';
+  commentsList.insertAdjacentHTML(`afterbegin`, tmp);
+});
+
+socket.on('popular_articles', (articles) => {
+
+  if (window.location.pathname !== `/`) {
+    return false;
+  }
+
+  const articlesList = document.querySelector(`.hot__list`);
+  const tmp = articles.map(({id, commentsCount, announce}) => (
+    `<li class="hot__list-item">
+      <a class="hot__list-link" href="/articles/${id}">${announce}<sup class="hot__link-sup"> ${commentsCount}</sup></a>
+    </li>`
+  ));
+  articlesList.innerHTML = '';
+  articlesList.insertAdjacentHTML(`afterbegin`, tmp);
+});
+
+// логика выбора даты в календаре
 let calendar = document.querySelector('.calendar');
 if (calendar) {
   let dates = calendar.querySelector('.calendar__dates');

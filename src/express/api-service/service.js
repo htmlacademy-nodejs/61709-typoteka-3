@@ -16,6 +16,10 @@ class ApiService {
     return await this._api.get(`/articles/users/${userId}`);
   }
 
+  async getMostDiscussedArticles() {
+    return await this._api.get(`/articles/comments`);
+  }
+
   async getArticleById(articleId) {
     return await this._api.get(`/articles/${articleId}`);
   }
