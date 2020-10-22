@@ -5,8 +5,6 @@ const CategoryService = require(`./data-service/category`);
 const MAX_FILE_SIZE = 15 * 1024 * 1024;
 const MEGABYTE_IN_BYTES = 1048576;
 
-const categoryService = new CategoryService();
-
 const newArticleFormFieldsRules = [
   check(`title`)
     .trim()
@@ -63,7 +61,7 @@ const newCategoryFormFieldsRules = [
     .withMessage(`Название категории должно содержать от 5 до 30 символов`)
     .bail()
     .custom(async (value) => {
-      const isCategoryExist = await categoryService.findOne(value);
+      const isCategoryExist = await CategoryService.findOne(value);
 
       if (isCategoryExist) {
         throw Error(`Категория уже существует`);
