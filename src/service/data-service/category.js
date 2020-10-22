@@ -5,11 +5,11 @@ const {Category} = sequelize.models;
 
 class CategoryService {
 
-  async create(categoryData) {
+  static async create(categoryData) {
     return await Category.create(categoryData, {returning: true});
   }
 
-  async updateCategory(categoryId, categoryData) {
+  static async updateCategory(categoryId, categoryData) {
     const [updateResult, [updatedCategory]] = await Category.update(categoryData, {
       where: {id: categoryId},
       returning: true
@@ -22,7 +22,7 @@ class CategoryService {
     return updatedCategory;
   }
 
-  async findOne(title) {
+  static async findOne(title) {
     return await Category.findOne({
       where: {
         title
@@ -30,15 +30,15 @@ class CategoryService {
     });
   }
 
-  async delete(categoryId) {
+  static async delete(categoryId) {
     return await Category.destroy({where: {id: categoryId}});
   }
 
-  async findAll() {
+  static async findAll() {
     return await Category.findAll({});
   }
 
-  async findAllWithArticlesCount() {
+  static async findAllWithArticlesCount() {
     const sql = `SELECT
                   categories.id,
                   categories.title,
@@ -56,7 +56,7 @@ class CategoryService {
     return categories;
   }
 
-  async findCategoryById(categoryId) {
+  static async findCategoryById(categoryId) {
     return await Category.findByPk(categoryId);
   }
 }

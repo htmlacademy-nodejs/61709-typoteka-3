@@ -5,23 +5,23 @@ const {User} = sequelize.models;
 
 class UserService {
 
-  async createUser(userData) {
+  static async createUser(userData) {
     return await User.create(userData, {returning: true});
   }
 
-  async findAll() {
+  static async findAll() {
     return await User.findAll();
   }
 
-  async countUsers() {
+  static async countUsers() {
     return await User.count();
   }
 
-  async findUserById(userId) {
+  static async findUserById(userId) {
     return await User.findByPk(userId);
   }
 
-  async findUserByEmail(email) {
+  static async findUserByEmail(email) {
     return await User.findOne({where: {email}});
   }
 

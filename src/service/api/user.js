@@ -11,11 +11,11 @@ const saltRounds = 10;
 
 const jwtVerify = util.promisify(jwt.verify);
 
-const getUserRouter = (userService) => {
+const getUserRouter = (UserService) => {
   const userRouter = new Router();
 
   userRouter.get(`/`, async (req, res) => {
-    const users = await userService.findAll();
+    const users = await UserService.findAll();
     return res.status(HttpCode.SUCCESS).json(users);
   });
 
@@ -26,7 +26,7 @@ const getUserRouter = (userService) => {
     };
     let userData = {...req.body};
 
-    const user = await userService.findUserByEmail(userData.email);
+    const user = await UserService.findUserByEmail(userData.email);
 
     if (user) {
       errors.errorsList.push(`Пользователь с такой почтой ${user.email} уже существует.`);
@@ -37,7 +37,7 @@ const getUserRouter = (userService) => {
       return res.status(HttpCode.BAD_REQUEST).send({errors});
     }
 
-    const usersCount = await userService.countUsers();
+    const usersCount = await UserService.countUsers();
 
     userData = {
       ...userData,
@@ -45,19 +45,19 @@ const getUserRouter = (userService) => {
       role: usersCount > 0 ? UserRole.READER : UserRole.ADMIN
     };
 
-    const newUser = await userService.createUser(userData);
+    const newUser = await UserService.createUser(userData);
 
     return res.status(HttpCode.CREATED).json(newUser);
   });
 
   userRouter.post(`/login`, ...loginUserFormFieldsRules, async (req, res) => {
-    let {email, password} = req.body;
+    const {email, password} = req.body;
     const errors = {
       errorsList: validateForm(req),
       errorByField: validateFormByFields(req)
     };
 
-    const user = await userService.findUserByEmail(email);
+    const user = await UserService.findUserByEmail(email);
 
     if (!user) {
       errors.errorsList.push(`Пользователь с такой почтой ${email} не зарегистрирован.`);
@@ -91,7 +91,7 @@ const getUserRouter = (userService) => {
 
       const jwtVerifyResult = await jwtVerify(accessToken, process.env.JWT_ACCESS_SECRET);
 
-      const user = await userService.findUserById(jwtVerifyResult.id);
+      const user = await UserService.findUserById(jwtVerifyResult.id);
       return res.status(HttpCode.SUCCESS).json({user});
     } catch (err) {
       return res.sendStatus(HttpCode.UNAUTHORIZED);

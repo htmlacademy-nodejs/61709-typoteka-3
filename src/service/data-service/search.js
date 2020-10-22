@@ -6,7 +6,7 @@ const {Op} = require(`sequelize`);
 
 class SearchService {
 
-  async findAll(text) {
+  static async findAll(text) {
     const articles = Article.findAll({
       where: {
         title: {

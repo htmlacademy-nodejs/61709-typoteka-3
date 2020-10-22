@@ -12,11 +12,8 @@ const ARTICLES_LIMIT = 8;
 const countOffset = (limit, activePage) => limit * (activePage - 1);
 
 class ArticleService {
-  constructor(articles) {
-    this._articles = articles;
-  }
 
-  async findAll(activePage) {
+  static async findAll(activePage) {
     const offset = countOffset(ARTICLES_LIMIT, activePage);
     const articles = await Article.findAll({
       include: [`categories`, `comments`],
@@ -33,7 +30,7 @@ class ArticleService {
     };
   }
 
-  async findAllByUser(userId) {
+  static async findAllByUser(userId) {
     const userArticles = await Article.findAll({
       where: {userId}
     });
@@ -41,13 +38,13 @@ class ArticleService {
     return userArticles;
   }
 
-  async createArticle(articleData) {
+  static async createArticle(articleData) {
     const newArticle = await Article.create(articleData, {returning: true});
     await newArticle.addCategories(articleData.categories);
     return newArticle;
   }
 
-  async updateArticle(articleId, articleData) {
+  static async updateArticle(articleId, articleData) {
     const [updateResult, [updatedArticle]] = await Article.update(articleData, {
       where: {id: articleId},
       returning: true
@@ -63,11 +60,11 @@ class ArticleService {
     return updatedArticle;
   }
 
-  async deleteArticle(articleId) {
+  static async deleteArticle(articleId) {
     return await Article.destroy({where: {id: articleId}});
   }
 
-  async findMostDiscussedArticles() {
+  static async findMostDiscussedArticles() {
 
     const offers = await Article.findAll({
       attributes: [`id`, `announce`, [sequelize.fn(`count`, sequelize.col(`comments.articleId`)), `commentsCount`]],
@@ -88,7 +85,7 @@ class ArticleService {
     return offers;
   }
 
-  async findOne(articleId) {
+  static async findOne(articleId) {
     const article = await Article.findByPk(articleId, {
       include: [
         `categories`,
@@ -104,7 +101,7 @@ class ArticleService {
     return article;
   }
 
-  async findArticlesByCategory(categoryId, activePage) {
+  static async findArticlesByCategory(categoryId, activePage) {
     const offset = countOffset(ARTICLES_LIMIT, activePage);
     const activeCategory = await Category.findByPk(categoryId);
     const articlesCount = await activeCategory.countArticles();
@@ -121,14 +118,14 @@ class ArticleService {
     };
   }
 
-  async findAllByUser(userId) {
+  static async findAllByUser(userId) {
     return await Article.findAll({
       where: {userId},
       order: [[`createdDate`, `DESC`]]
     });
   }
 
-  async findUserArticlesWithComments(userId) {
+  static async findUserArticlesWithComments(userId) {
     return await Article.findAll({
       where: {userId},
       include: [

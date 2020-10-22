@@ -6,21 +6,21 @@ const LAST_COMMENTS_LIMIT = 4;
 
 class CommentService {
 
-  async createComment(articleId, commentData) {
+  static async createComment(articleId, commentData) {
     return await Comment.create(commentData, {returning: true});
   }
 
-  async findOne(commentId) {
+  static async findOne(commentId) {
     return await Comment.findByPk(commentId, {returning: true});
   }
 
-  async deleteComment(commentId) {
+  static async deleteComment(commentId) {
     return await Comment.destroy({
       where: {id: commentId}
     });
   }
 
-  async findAll() {
+  static async findAll() {
     const comments = await Comment.findAll({
       include: [`users`],
       order: [[`createdDate`, `DESC`]],

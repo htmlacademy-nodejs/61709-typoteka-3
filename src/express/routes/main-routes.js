@@ -49,7 +49,7 @@ const getMainRouter = (service) => {
   mainRouter.post(`/register`, checkAuth(service, RouteProtectionType.SEMI), upload, csrfProtection, async (req, res, next) => {
     try {
       const file = req.file;
-      let userData = {...req.body};
+      const userData = {...req.body};
 
       userData = {
         ...userData,
@@ -76,7 +76,7 @@ const getMainRouter = (service) => {
 
   mainRouter.post(`/login`, csrfProtection, checkAuth(service, RouteProtectionType.SEMI), async (req, res, next) => {
     try {
-      let userData = {...req.body};
+      const userData = {...req.body};
       const userLoginResult = await service.logUser(userData);
 
       if (userLoginResult.validationError) {

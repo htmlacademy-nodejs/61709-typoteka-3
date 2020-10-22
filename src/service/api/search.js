@@ -7,7 +7,7 @@ const {
   highlightArticleTitle
 } = require(`../../utils`);
 
-const getSearchRouter = (searchService) => {
+const getSearchRouter = (SearchService) => {
 
   const searchRouter = new Router();
 
@@ -23,7 +23,7 @@ const getSearchRouter = (searchService) => {
       });
     }
 
-    const searchedArticles = await searchService.findAll(query);
+    const searchedArticles = await SearchService.findAll(query);
     return res.status(HttpCode.SUCCESS).json(
         highlightArticleTitle(formatArticleDate(searchedArticles), query)
     );

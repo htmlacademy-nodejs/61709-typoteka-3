@@ -32,7 +32,7 @@ const getCategoriesRouter = (service) => {
 
   categoriesRouter.post(`/`, csrfProtection, checkAuth(service, RouteProtectionType.FULL, true), async (req, res, next) => {
     try {
-      let categoryData = {...req.body};
+      const categoryData = {...req.body};
 
       const createdCategory = await service.createNewCategory(categoryData);
 
@@ -50,7 +50,7 @@ const getCategoriesRouter = (service) => {
   categoriesRouter.post(`/:categoryId`, csrfProtection, checkAuth(service, RouteProtectionType.FULL, true), async (req, res, next) => {
     try {
       const {categoryId} = req.params;
-      let categoryData = {...req.body};
+      const categoryData = {...req.body};
 
       const updatedCategory = await service.updateCategory(categoryId, categoryData);
 

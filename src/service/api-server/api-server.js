@@ -47,27 +47,27 @@ const getServer = async (port) => {
 
   app.use(
       `${API_PREFIX}/categories`,
-      getCategoryRouter(new CategoryService())
+      getCategoryRouter(CategoryService)
   );
 
   app.use(
       `${API_PREFIX}/users`,
-      getUserRouter(new UserService())
+      getUserRouter(UserService)
   );
 
   app.use(
       `${API_PREFIX}/articles`,
       getArticlesRouter(
-          new ArticleService(),
-          new CommentService(),
-          new CategoryService(),
-          new UserService()
+          ArticleService,
+          CommentService,
+          CategoryService,
+          UserService
       )
   );
 
   app.use(
       `${API_PREFIX}/search`,
-      getSearchRouter(new SearchService())
+      getSearchRouter(SearchService)
   );
 
   app.use((req, res) => {
